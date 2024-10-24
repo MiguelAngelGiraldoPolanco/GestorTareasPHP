@@ -1,14 +1,8 @@
 <?php
     $_SESSION ['user']="Miguel";
+    include "views/header.php";
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GestorTareas</title>
-</head>
-<body>
+    <div>
     <form action = "login.php" method="POST">
         Nombre Tarea: 
         <input type="text" name="name" placeholder="Ingrese el nombre de la tarea"><br>
@@ -26,5 +20,5 @@
 
         <input type="submit" value="Login">        
     </form>
-</body>
-</html>
+    </div>
+<?php include "views/footer.php"; ?>

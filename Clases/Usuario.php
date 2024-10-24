@@ -8,14 +8,6 @@
             $this->username = $username;
             $this->password = password_hash($password, PASSWORD_DEFAULT);
         }
-
-        public function getUsername(){
-            return $this->username;
-        }
-        
-        public function setPassword($password){
-            $this->password = password_hash($password, PASSWORD_DEFAULT);
-        }
         
         public function verifyPassword($password){
             try {

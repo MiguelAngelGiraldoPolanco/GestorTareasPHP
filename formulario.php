@@ -15,7 +15,7 @@
         Fecha limite:
         <input type="datetime-local" name="date" placeholder="Ingrese la descripcion"><br>
 
-        <input type="submit" value="Login">        
+        <input type="submit" value="Crear Tarea">        
     </form>
     </div>
 <?php include "views/footer.php"; ?>

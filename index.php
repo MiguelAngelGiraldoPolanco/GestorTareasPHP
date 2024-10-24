@@ -1,22 +1,10 @@
-<?php
-    $_SESSION ['user']="Miguel";
-    include "views/header.php";
-?>
+<?php include "views/header.php"; ?>
     <div>
-    <form action = "login.php" method="POST">
-        Nombre Tarea: 
-        <input type="text" name="name" placeholder="Ingrese el nombre de la tarea"><br>
-        Descripcion:
-        <input type="text" name="description" placeholder="Ingrese la descripcion"><br>
-        Prioridad:
-        <select id="priority" name="priority">
-            <option value="Alta">Alta</option>
-            <option value="Media">Media</option>
-            <option value="Baja">Baja</option>
-        </select><br>
-        <!-- <input type="bar" name="priority" placeholder="Baja Media Alta"><br> -->
-        Fecha limite:
-        <input type="datetime-local" name="date" placeholder="Ingrese la descripcion"><br>
+    <form action = "" method="POST">
+        User: 
+        <input type="text" name="name" placeholder="Ingrese el nombre de usuaruio"><br>
+        Password:
+        <input type="text" name="password" placeholder="Ingrese la contraseña"><br>
 
         <input type="submit" value="Login">        
     </form>

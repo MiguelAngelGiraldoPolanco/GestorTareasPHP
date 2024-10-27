@@ -15,14 +15,26 @@ class Tarea {
     public function getNombreTarea(){
         return $this->nombreTarea;
     }
+    public function setNombreTarea($nombreTarea){
+        $this->nombreTarea = $nombreTarea;
+    }
     public function getDescripcionTarea(){
         return $this->descripcionTarea;
+    }
+    public function setDescripcionTarea($descripcionTarea){
+        $this->descripcionTarea = $descripcionTarea;
     }
     public function getPrioridad(){
         return $this->prioridad;
     }
+    public function setPrioridad($prioridad){
+        $this->prioridad = $prioridad;
+    }
     public function getFechaLimite(){
         return $this->fechaLimite;
+    }
+    public function setFechaLimite($fechaLimite){
+        $this->fechaLimite = $fechaLimite;
     }
 }
 ?>

@@ -16,9 +16,10 @@
             <option value="Baja">Baja</option>
         </select><br>
         Fecha limite:
-        <input type="datetime-local" name="date" placeholder="Ingrese la descripcion"><br>
-
-        <input type="submit" value="Crear Tarea">     
+        <input type="datetime-local" name="date" ><br>
+        <input type="submit" name="mostrar" value="Mostrar Tareas" ><br>
+        <input type="submit" name= "crear"value="Crear Tarea">  
+          
           
     </form>
     <a href='LogOut.php'>Salir</a>
@@ -30,10 +31,11 @@
         $ManagerTareas = new ManagerTareas();
         $_SESSION['managerTareas'] = $ManagerTareas;
     }
-    if(isset($_POST['name']) && isset($_POST['description'])){
+    if(isset($_POST['crear'])){
         $ManagerTareas->crearTarea($_POST['name'], $_POST['description'], $_POST['priority'], $_POST['date']);   
-        echo "<p>Tarea creada correctamente </p>";
     }
-
+    if(isset($_POST['mostrar'])){
+        $ManagerTareas->listarTareas();
+    }
     include "views/footer.php"; 
 ?>

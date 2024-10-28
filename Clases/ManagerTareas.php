@@ -20,13 +20,15 @@ class ManagerTareas extends Tarea{
     }
     // Método para listar todas las tareas
     public function listarTareas() {   
-        var_dump($this->tareas); 
+        // var_dump($this->tareas); 
         if ($this->tareas === null){
             echo "<p>No tienes tareas creadas</p>";
             return;
         }else {
         foreach ($this->tareas as $key => $tarea) {
+
             echo '<div>
+                <h2>Tarea: '.$key.'</h2>
                     <form action="" method="POST">
                         Nombre Tarea: 
                         <input type="text" name="name" value="'.$tarea->getNombreTarea().'"><br>
@@ -60,15 +62,7 @@ class ManagerTareas extends Tarea{
                   </div>';
         }
         } 
-    
-        if (isset($_POST['eliminar'])) {
-            $ManagerTareas->eliminarTarea($_POST['index']);
-        }
-    if (isset($_POST['modificar'])) {
-        $this->modificarTarea($_POST['index'],$_POST['name'], $_POST['description'], $_POST['priority'], $_POST['date']);
-    }
-
-        
+           
     }
     public function modificarTarea($index,$nombre,$descripcion,$prioridad,$fechaLimite) {
         if (isset($this->tareas[$index])) {

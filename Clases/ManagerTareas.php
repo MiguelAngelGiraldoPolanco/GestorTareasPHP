@@ -1,81 +1,93 @@
 <?php
 include "Clases/Tarea.php";
-class ManagerTareas extends Tarea{
+include "Clases/BaseDatos.php";
 
-    private $tareas = array();
+class ManagerTareas extends Tarea {
+    private $conn;
+    
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
 
-    public function __construct() {        
+    // Método para crear una nueva tarea en la base de datos
+    public function crearTarea($nombre, $descripcion, $prioridad, $fechaLimite) {
+        $query = "INSERT INTO tarea (nombre, descripcion, prioridad, fechaLimite) VALUES (:nombre, :descripcion, :prioridad, :fechaLimite)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":descripcion", $descripcion);
+        $stmt->bindParam(":prioridad", $prioridad);
+        $stmt->bindParam(":fechaLimite", $fechaLimite);
+
+        if ($stmt->execute()) {
+            echo "<p>Tarea creada correctamente</p>";
+        } else {
+            echo "<p>Error al crear la tarea</p>";
+        }
     }
-    // Método para crear una nueva tarea
-    public function crearTarea($nombre,$descripcion,$prioridad,$fechaLimite) {
-        $tarea=new Tarea($nombre,$descripcion,$prioridad,$fechaLimite);
-        array_push($this->tareas, $tarea);
-        echo "<p>Tarea creada correctamente</p>";
+
+    // Método para eliminar una tarea de la base de datos por su ID
+    public function eliminarTarea($id) {
+        $query = "DELETE FROM tarea WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+
+        if ($stmt->execute()) {
+            echo "<p>Tarea eliminada correctamente</p>";
+        } else {
+            echo "<p>Error al eliminar la tarea</p>";
+        }
     }
-    // Método para obtener una tarea específica
-    public function eliminarTarea($index) {                    
-        unset($this->tareas[$index]);
-        echo '<p>Tarea eliminada correctamente</p>';
-        $this->tareas = array_values($this->tareas);        
-    }
-    // Método para listar todas las tareas
-    public function listarTareas() {   
-        // var_dump($this->tareas); 
-        if ($this->tareas === null){
+
+    // Método para listar todas las tareas de la base de datos
+    public function listarTareas() {
+        $query = "SELECT * FROM tarea";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        $tareas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($tareas) === 0) {
             echo "<p>No tienes tareas creadas</p>";
-            return;
-        }else {
-        foreach ($this->tareas as $key => $tarea) {
-
-            echo '<div>
-                <h2>Tarea: '.$key.'</h2>
+        } else {
+            foreach ($tareas as $tarea) {
+                echo '<div>
+                    <h2>Tarea ID: '.$tarea['id'].'</h2>
                     <form action="" method="POST">
                         Nombre Tarea: 
-                        <input type="text" name="name" value="'.$tarea->getNombreTarea().'"><br>
+                        <input type="text" name="name" value="'.$tarea['nombre'].'"><br>
                         Descripción:
-                        <input type="text" name="description" value="'.$tarea->getDescripcionTarea().'"><br>
+                        <input type="text" name="description" value="'.$tarea['descripcion'].'"><br>
                         Prioridad:
                         <select id="priority" name="priority">';
-            
-            // Verifica el valor de prioridad y selecciona la opción correspondiente
-            if ($tarea->getPrioridad() == 'Alta') {
-                echo '<option value="Alta" selected>Alta</option>
-                      <option value="Media">Media</option>
-                      <option value="Baja">Baja</option>';
-            } else if ($tarea->getPrioridad() == 'Media') {
-                echo '<option value="Alta">Alta</option>
-                      <option value="Media" selected>Media</option>
-                      <option value="Baja">Baja</option>';
-            } else if ($tarea->getPrioridad() == 'Baja') {
-                echo '<option value="Alta">Alta</option>
-                      <option value="Media">Media</option>
-                      <option value="Baja" selected>Baja</option>';
+                
+                $prioridad = $tarea['prioridad'];
+                echo '<option value="Alta" '.($prioridad == 'Alta' ? 'selected' : '').'>Alta</option>
+                      <option value="Media" '.($prioridad == 'Media' ? 'selected' : '').'>Media</option>
+                      <option value="Baja" '.($prioridad == 'Baja' ? 'selected' : '').'>Baja</option>';
+
+                echo '</select><br>
+                      Fecha límite:
+                      <input type="date" name="date" value="'.$tarea['fechaLimite'].'"><br>     
+                      </form>
+                      </div>';
             }
-        
-            echo '</select><br>
-                  Fecha límite:
-                  <input type="datetime-local" name="date" value="'.$tarea->getFechaLimite().'"><br>
-                  <input type="submit" name = "modificar" value="Modificar">
-                  <input type="submit" name = "eliminar" value="Eliminar">     
-                  <input type="hidden" name="index" value="'.$key.'">      
-                  </form>
-                  </div>';
         }
-        } 
-           
     }
-    public function modificarTarea($index,$nombre,$descripcion,$prioridad,$fechaLimite) {
-        if (isset($this->tareas[$index])) {
-            $this->tareas[$index]->setNombreTarea($nombre);
-            $this->tareas[$index]->setDescripcionTarea($descripcion);
-            $this->tareas[$index]->setPrioridad($prioridad);
-            $this->tareas[$index]->setFechaLimite($fechaLimite);
+
+    // Método para modificar una tarea en la base de datos
+    public function modificarTarea($id, $nombre, $descripcion, $prioridad, $fechaLimite) {
+        $query = "UPDATE tarea SET nombre = :nombre, descripcion = :descripcion, prioridad = :prioridad, fechaLimite = :fechaLimite WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":descripcion", $descripcion);
+        $stmt->bindParam(":prioridad", $prioridad);
+        $stmt->bindParam(":fechaLimite", $fechaLimite);
+
+        if ($stmt->execute()) {
             echo '<p>Tarea modificada correctamente</p>';
         } else {
-            echo '<p>Error: Tarea no encontrada.</p>';
+            echo '<p>Error: No se pudo modificar la tarea.</p>';
         }
     }
-
-
 }
 ?>

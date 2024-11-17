@@ -3,57 +3,48 @@
 include "views/header.php";
 include "Clases/Usuario.php";
 include "Clases/ManagerTareas.php";
-include_once "Clases/BaseDatos.php";
+
 session_start();
 
-// Crea una instancia de la clase Database y obtiene la conexión
-$db = new BaseDatos();
-$conn = $db->getConnection();
-$managerTareas = new ManagerTareas($conn);
-
-// Verifica que la conexión se haya realizado con éxito
-if ($conn) {
-    // Realiza la consulta para obtener los usuarios
-    $users = $conn->prepare('SELECT nombre, clave FROM user');
-    $users->execute();
-    $resultados = $users->fetchAll(PDO::FETCH_ASSOC); // Recupera todas las filas como un array asociativo
-    print_r($resultados);  // Imprime los resultados para verificar
-} else {
-    echo "Error en la conexión a la base de datos.";
-}
-
-// Formulario de inicio de sesión
 ?>
-<div>
-    <form action="" method="POST">
-        User: 
-        <input type="text" name="name" placeholder="Ingrese el nombre de usuario"><br>
-        Password:
-        <input type="password" name="password" placeholder="Ingrese la contraseña"><br>
-        <input type="submit" value="Login">        
-    </form>
-</div>
 
-<?php 
-// Verifica si se han enviado el nombre de usuario y la contraseña
-if (isset($_POST['name']) && isset($_POST['password'])) { 
-    // Crea una nueva instancia de Usuario con los datos ingresados
-    $user = new Usuario($_POST['name'], $_POST['password']);
-    
-    // Verifica las credenciales del usuario con la base de datos
-    if ($user->isAdmin($resultados)) {
-        // Valida la estructura de la contraseña
-        if ($user->validatePasswordStructure()) {
-            $_SESSION['managerTareas'] = new ManagerTareas($conn);  // Guardamos la instancia en la sesión 
-        }
-        // Redirige al usuario a la página de formulario
-        header('Location: formulario.php');
-        exit();
-    } else {
-        echo "Credenciales incorrectas";
-    }   
-}
+        <div id =formulario>    
+            <form action="index.php" method="post">
+                <p>Email:  <input type="email" placeholder="Ingrese su Nombre" name="email" required ></p>
+                <p>Contraseña:  <input type="password" placeholder="Ingrese su Contraseña" name="contrasenya" required></p>
+            <input type="submit" value="Login" name="accion"> 
+            <p>(O crea una cuenta si no la tienes)</p>
+            <input type="submit" value="Crear usuario" name="accion">
+            </form>
+        </div>
+        <?php
+        
+                try {
+                    if (isset($_POST['accion'])) {
+                        switch ($_POST['accion']) {
+                            case 'Login':
+                                
+                                $usuario = new Usuario($_POST['email'], $_POST['contrasenya']);
+                               if( $usuario->validar_usuario($_POST['email'], $_POST['contrasenya'])){
 
-// Incluye el pie de página
+                                $_SESSION['usuarioCreado'] = $usuario;
+                                header('Location: formulario.php');
+                                exit();
+                               } else{
+                                  echo "<p>El email o la contraseña no son correctos.</p>";
+                               }
+                            break;
+                            case 'Crear usuario':
+                                if (isset($_POST['email'])) {
+                                    $usuario = new Usuario($_POST['email'], $_POST['contrasenya']);
+                                    $usuario->crearUsuario($_POST['email'],$_POST['contrasenya']);
+                                }
+                            break;
+                        }
+                    }
+                } catch (Exception $e) {
+                    echo "<p>".$e->getMessage()."</p>";
+                }
+        
 include "views/footer.php"; 
 ?>

@@ -1,6 +1,6 @@
 <?php
 include "Clases/Tarea.php";
-include "Clases/BaseDatos.php";
+include_once "Clases/BaseDatos.php";
 
 class ManagerTareas extends Tarea {
     private $conn;
